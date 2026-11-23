@@ -55,11 +55,13 @@ function showEmptyChat() {
 }
 
 function setMatchedControls(isMatched) {
-  $('nextBtn').disabled = !active;
+  $('startBtn').querySelector('span').textContent = active ? 'Next' : 'Start';
+  $('startBtn').disabled = false;
   $('reportBtn').disabled = !isMatched;
   $('blockBtn').disabled = !isMatched;
   $('messageInput').disabled = !isMatched;
   $('sendBtn').disabled = !isMatched;
+  $('messageInput').placeholder = isMatched ? 'Type a message...' : 'Message available after a match';
 }
 
 async function loadConfig() {
@@ -181,12 +183,13 @@ async function startChat() {
 
   active = true;
   matched = false;
-  $('startBtn').disabled = true;
+  $('startBtn').disabled = false;
   $('stopBtn').disabled = false;
-  $('nextBtn').disabled = false;
-  $('countrySelect').disabled = true;
+  $('startBtn').querySelector('span').textContent = 'Next';
+  $('divisionSelect').disabled = true;
   $('messageInput').disabled = true;
   $('sendBtn').disabled = true;
+  $('messageInput').placeholder = 'Message available after a match';
 
   if (mode === 'text') {
     $('videoStage').classList.add('text-mode');
@@ -200,7 +203,7 @@ async function startChat() {
   setStatus('Finding someone…', 'searching');
   socket.emit('join-queue', {
     mode,
-    country: $('countrySelect').value,
+    division: $('divisionSelect').value,
     interests: []
   });
 }
@@ -213,10 +216,11 @@ function stopChat() {
   stopMedia();
   $('startBtn').disabled = false;
   $('stopBtn').disabled = true;
-  $('nextBtn').disabled = true;
-  $('countrySelect').disabled = false;
+  $('startBtn').querySelector('span').textContent = 'Start';
+  $('divisionSelect').disabled = false;
   $('messageInput').disabled = true;
   $('sendBtn').disabled = true;
+  $('messageInput').placeholder = 'Message available after a match';
   $('reportBtn').disabled = true;
   $('blockBtn').disabled = true;
   $('remoteTitle').textContent = 'Your next stranger is waiting';
@@ -261,9 +265,8 @@ function sendMessage(event) {
   input.value = '';
 }
 
-$('startBtn').addEventListener('click', startChat);
+$('startBtn').addEventListener('click', () => active ? nextStranger() : startChat());
 $('stopBtn').addEventListener('click', stopChat);
-$('nextBtn').addEventListener('click', nextStranger);
 $('messageForm').addEventListener('submit', sendMessage);
 
 document.querySelectorAll('.mode-button').forEach(button => {

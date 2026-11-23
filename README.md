@@ -69,3 +69,7 @@ Backend health endpoint: `http://localhost:8000/api/health`
 
 ### Matching filters note
 The Country selector is used by the current in-memory matcher. The visible “I am” selector is a presentation placeholder only in this starter; it does not filter partners. Do not advertise gender matching until it is implemented with privacy, abuse-prevention, and age-safety controls.
+
+
+## Reference-matched UI update
+The client now uses the approved cream/white OmeTV-inspired layout with paired video panels, green Next (which starts the first chat and advances to the next stranger while active), orange Stop, white selectors, and a compact safety/chat panel. Button hover and press states are CSS-driven and preserve the existing socket/WebRTC handlers.

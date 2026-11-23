@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#fffaf7">
   <meta name="description" content="Ashraful Connect — meet people around the world with anonymous video and text chat.">
   <title>Ashraful Connect — Random Video Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,8 +19,10 @@
         <span class="brand-name">ASHRAFUL <b>CONNECT</b></span>
       </a>
       <div class="header-right">
-        <span class="guest-pill">GUEST MODE · NO LOGIN</span>
-        <div class="online-pill"><i></i><b id="onlineCount">0</b><span>online</span></div>
+        <span class="guest-pill">♧&nbsp; Guest Mode</span>
+        <div class="online-pill"><i></i><b id="onlineCount">0</b><span>Online</span></div>
+        <button class="header-icon" type="button" aria-label="Help">?</button>
+        <button class="header-icon" type="button" aria-label="Settings">⚙</button>
       </div>
     </header>
 
@@ -30,44 +32,39 @@
           <article class="video-card stranger-card">
             <video id="remoteVideo" autoplay playsinline></video>
             <div class="video-placeholder stranger-placeholder" id="remotePlaceholder">
-              <div class="ac-tv-logo"><span>ASHRAFUL</span><b>CONNECT</b><small>LIVE VIDEO CHAT</small></div>
-              <strong id="remoteTitle">Meet someone new</strong>
-              <span id="remoteHint">Press Start to connect with a stranger</span>
-              <div class="store-badges" aria-label="Ashraful Connect">
-                <span class="store-badge"><b>▶</b><span><small>WELCOME TO</small>ASHRAFUL CONNECT</span></span>
-                <span class="store-badge"><b>✦</b><span><small>MEET PEOPLE</small>AROUND THE WORLD</span></span>
-              </div>
-              <div class="volume-strip"><span>◖))</span><div><i></i></div></div>
+              <div class="ac-tv-logo"><span>AC</span><b>TV</b></div>
+              <strong id="remoteTitle">Searching for a partner...</strong>
+              <span id="remoteHint" class="search-dots">● &nbsp; ● &nbsp; ●</span>
+              <div class="store-badges" aria-label="Ashraful Connect"></div>
+              <div class="volume-strip"></div>
             </div>
-            <span class="video-label"><span class="live-indicator"></span> STRANGER</span>
+            <span class="video-label">♙&nbsp; Stranger</span>
           </article>
           <article class="video-card you-card">
             <video id="localVideo" autoplay muted playsinline></video>
             <div class="video-placeholder local-placeholder" id="localPlaceholder">
-              <div class="loading-ring" aria-hidden="true"></div>
-              <strong>Your camera preview</strong>
-              <span>Your video appears here when you press Start</span>
+              <div class="camera-off-icon" aria-hidden="true">▣╱</div>
+              <strong>Camera is off</strong>
             </div>
-            <span class="video-label">YOU</span>
+            <span class="video-label">▣&nbsp; You</span>
           </article>
         </div>
 
         <div class="toolbar">
-          <button class="action-button start-button" id="startBtn"><span class="button-icon">▶</span><span>Start</span></button>
-          <button class="action-button stop-button" id="stopBtn" disabled><span class="button-icon">■</span><span>Stop</span></button>
-          <label class="select-control">
-            <span>Country</span>
-            <select id="countrySelect" aria-label="Country matching group">
-              <option value="any">🌍 Any country</option>
-              <option value="bd">🇧🇩 Bangladesh</option>
-              <option value="in">🇮🇳 India</option>
-              <option value="pk">🇵🇰 Pakistan</option>
-              <option value="np">🇳🇵 Nepal</option>
-              <option value="lk">🇱🇰 Sri Lanka</option>
-              <option value="us">🇺🇸 United States</option>
-              <option value="gb">🇬🇧 United Kingdom</option>
-              <option value="ca">🇨🇦 Canada</option>
-              <option value="au">🇦🇺 Australia</option>
+          <button class="action-button start-button" id="startBtn" type="button"><span>Start</span></button>
+          <button class="action-button stop-button" id="stopBtn" type="button" disabled><span>Stop</span></button>
+          <label class="select-control division-control">
+            <span>Division</span>
+            <select id="divisionSelect" aria-label="Bangladesh division matching">
+              <option value="any">🇧🇩 Any division</option>
+              <option value="barishal">Barishal</option>
+              <option value="chattogram">Chattogram</option>
+              <option value="dhaka">Dhaka</option>
+              <option value="khulna">Khulna</option>
+              <option value="mymensingh">Mymensingh</option>
+              <option value="rajshahi">Rajshahi</option>
+              <option value="rangpur">Rangpur</option>
+              <option value="sylhet">Sylhet</option>
             </select>
           </label>
           <label class="select-control gender-control">
@@ -78,7 +75,6 @@
               <option value="woman">👩 Woman</option>
             </select>
           </label>
-          <button class="action-button next-button" id="nextBtn" disabled><span class="button-icon">↻</span><span>Next</span></button>
           <button class="icon-button" id="micBtn" title="Mute microphone" disabled>🎙</button>
           <button class="icon-button" id="cameraBtn" title="Turn camera off" disabled>▣</button>
         </div>
@@ -94,12 +90,12 @@
 
       <aside class="chat-panel">
         <div class="chat-state" id="chatState">
-          <div class="notice-icon">AC</div>
+          <div class="notice-icon">✚</div>
           <div class="notice-copy">By pressing “Start”, you agree to our <a href="#" id="rulesLink">rules</a>. Rule violators will be banned. Please keep your face visible in the camera frame.<br><span class="warning-symbol">⚠</span> <a href="#" id="safetyLink">Safety Reminder</a></div>
         </div>
         <div class="messages hidden" id="messages" aria-live="polite"></div>
         <form class="message-form" id="messageForm">
-          <input id="messageInput" maxlength="1000" placeholder="Write a message" autocomplete="off" disabled>
+          <input id="messageInput" maxlength="1000" placeholder="Type a message..." autocomplete="off" disabled>
           <button type="submit" id="sendBtn" disabled aria-label="Send message">➤</button>
         </form>
         <div class="moderation-actions">

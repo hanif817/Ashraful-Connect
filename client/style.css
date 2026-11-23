@@ -71,3 +71,322 @@ button,input,select{font:inherit}button{cursor:pointer}button:disabled{cursor:no
  .safety-row{font-size:9px;flex-wrap:wrap}.mode-switch{margin-left:auto}.chat-panel{min-height:230px;border-left:0;border-top:1px solid #ddd}.chat-state{font-size:12px;margin:8px;padding:9px}.messages{min-height:100px}.page-footer{height:auto;min-height:25px}
 }
 @media(max-width:420px){.video-stage{height:50vh;min-height:300px}.video-label{font-size:7px;left:6px;bottom:6px}.loading-ring{width:58px;height:58px;border-width:7px}.local-placeholder span{font-size:9px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.action-button,.select-control{height:65px}.next-button{grid-column:span 1;height:65px}.icon-button{height:44px}.select-control>span{font-size:13px}.safety-row{line-height:1.4}}
+
+
+/* Reference-matched OmeTV-inspired light interface */
+:root{font-family:"DM Sans",Arial,sans-serif;color:#252a32;background:#fffaf7;font-synthesis:none}
+html,body{margin:0;min-height:100%;background:#fffaf7}
+body{min-height:100vh;overflow:hidden}
+.app-shell{height:100vh;min-height:640px;display:flex;flex-direction:column;background:#fffaf7}
+.topbar{height:100px;flex:0 0 100px;display:flex;align-items:center;justify-content:space-between;padding:0 3%;background:#fffdfb;border-bottom:1px solid #eee7e2}
+.brand{display:flex;align-items:center;gap:26px;color:#30343b;text-decoration:none}
+.brand-mark{width:70px;height:58px;border:4px solid #ff7138;border-radius:12px;background:#fff;color:#f26532;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 29px "Space Grotesk";line-height:25px;position:relative;transform:none}
+.brand-mark:before{content:"";position:absolute;width:28px;height:4px;background:#ff7138;top:-11px;left:19px;transform:rotate(-50deg);border-radius:5px}
+.brand-mark small{font-size:11px;letter-spacing:1px;align-self:flex-end;margin-right:8px}
+.brand-name{font:700 clamp(19px,2.5vw,38px) "Space Grotesk";letter-spacing:-.7px}.brand-name b{color:#f36a36}
+.header-right{display:flex;align-items:center;gap:18px}
+.guest-pill,.online-pill{font-size:16px;letter-spacing:0;color:#333b45;background:#fff;border:1px solid #e5e1df;border-radius:30px;padding:13px 20px}
+.online-pill{display:flex;align-items:center;gap:9px;font-size:18px}.online-pill i,.live-indicator{width:12px;height:12px;border-radius:50%;background:#12c94a;display:inline-block}.online-pill b{color:#1c252d}
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(360px,1fr);grid-template-rows:minmax(330px,1fr) auto;gap:0;background:#fffaf7;padding:12px 14px 10px}
+.stage-column{display:contents}
+.video-stage{grid-column:1/3;grid-row:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fff;padding:0 0 8px}
+.video-card{position:relative;min-width:0;min-height:0;overflow:hidden;background:#000;border:5px solid #fff;border-radius:24px;box-shadow:0 4px 18px #4a33200d}
+.video-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;display:block}
+.video-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:22px;color:#f6f6f6}
+.stranger-placeholder{background-color:#303033;background-image:radial-gradient(#ffffff18 1px,transparent 1.7px),radial-gradient(#00000055 1px,transparent 2px),linear-gradient(135deg,#454548,#242427);background-size:5px 5px,7px 7px,100% 100%;background-position:0 0,2px 3px,0 0}
+.stranger-placeholder:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0001,#0004);pointer-events:none}
+.stranger-placeholder>*{position:relative;z-index:1}
+.ac-tv-logo{width:124px;height:106px;border:6px solid #f36a36;border-radius:23px;background:#fff;color:#f36a36;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 5px 16px #0004;transform:none;font-family:"Space Grotesk";position:relative}
+.ac-tv-logo:before{content:"";position:absolute;width:42px;height:6px;border-radius:10px;background:#f36a36;top:-14px;left:32px;transform:rotate(-45deg)}
+.ac-tv-logo span{font-size:37px;font-weight:700;letter-spacing:-2px;line-height:1}.ac-tv-logo b{font-size:12px;color:#f36a36;line-height:1;align-self:flex-end;margin-right:13px}.ac-tv-logo small{display:none}
+.stranger-placeholder>strong{font:500 clamp(18px,2vw,27px) "DM Sans";margin-top:4px}.stranger-placeholder>span{font-size:clamp(12px,1.2vw,17px);color:#e5e5e5}
+.store-badges,.volume-strip{display:none!important}
+.you-card{border:5px solid #fff;background:#000}
+.local-placeholder{background:#000}.local-placeholder strong{font:500 clamp(18px,1.8vw,25px) "DM Sans";color:#f4f4f4}.local-placeholder span{font-size:14px;color:#aaa;max-width:300px}
+.loading-ring{width:76px;height:76px;border-radius:50%;border:8px dotted #e9e9e9;animation:spin 2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.video-label{position:absolute;left:18px;top:16px;bottom:auto;z-index:3;display:flex;align-items:center;gap:9px;background:#202329dd;border:1px solid #ffffff20;border-radius:12px;padding:10px 15px;color:#fff;font-size:16px;font-weight:600;letter-spacing:0}
+.toolbar{grid-column:1;grid-row:2;display:grid;grid-template-columns:1.08fr 1.08fr 1.15fr 1.15fr;gap:10px;padding:18px 10px 10px 4px;background:transparent;align-items:stretch}
+.action-button,.select-control,.icon-button{border:1px solid #e5e1df;border-radius:19px;background:#fff;color:#333b45;min-width:0;height:104px;box-shadow:0 4px 12px #37251a12;transition:transform .14s ease,filter .16s ease,box-shadow .16s ease,background-color .16s ease}
+.action-button{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:14px;font-size:clamp(20px,2.1vw,32px);font-weight:700}
+.button-icon{display:inline-flex;align-items:center;justify-content:center;font-size:28px}
+.start-button{background:linear-gradient(135deg,#35c978,#18a95b);border:1px solid #1eae62;color:#fff;box-shadow:0 5px 0 #13894a,0 10px 18px #149b5630}
+.stop-button{background:linear-gradient(135deg,#ff8749,#f34e27);border:1px solid #f15b31;color:#fff;box-shadow:0 5px 0 #d94020,0 10px 18px #f15b3130}
+.next-button{background:#20b968;border-color:#20b968;color:#fff}
+.action-button:hover:not(:disabled),.select-control:hover:not(:has(select:disabled)){filter:brightness(1.045);transform:translateY(-2px);box-shadow:0 7px 15px #37251a18}
+.action-button:active:not(:disabled),.select-control:active{transform:translateY(3px) scale(.975);filter:brightness(.96);box-shadow:0 1px 2px #37251a20}
+.action-button:focus-visible,.select-control:focus-within,.message-form button:focus-visible{outline:3px solid #ffb38e;outline-offset:3px}
+.action-button:disabled{opacity:.42;filter:saturate(.55);box-shadow:none;transform:none}
+#nextBtn{display:none}
+.select-control{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:12px;padding:12px;background:#fff;border-color:#e7e1de}
+.select-control>span{font-size:16px;color:#555e68}
+.select-control select{width:auto;max-width:100%;border:0;outline:0;background:transparent;color:#202832;text-align:left;font-size:clamp(13px,1.25vw,19px);font-weight:600}
+.select-control option{background:#fff;color:#333}
+.gender-control{min-width:0}
+.icon-button{display:none}
+.safety-row{display:none}
+.chat-panel{grid-column:2;grid-row:2;min-width:0;display:flex;flex-direction:column;justify-content:space-between;background:#fffdfc;color:#333;border:1px solid #e9e2de;border-radius:22px;margin:12px 0 0 0;min-height:160px;box-shadow:0 4px 14px #37251a10}
+.chat-state{display:flex;align-items:flex-start;gap:14px;margin:10px 12px;padding:14px;border:0;border-radius:12px;box-shadow:none;color:#343b45;font-size:clamp(13px,1.2vw,18px);line-height:1.45;background:transparent}
+.notice-icon{flex:0 0 40px;height:40px;border:2px solid #f36a36;border-radius:10px;color:#f36a36;font:700 12px "Space Grotesk";display:grid;place-items:center}
+.notice-copy a{color:#249c7d;text-decoration:underline}.warning-symbol{color:#d69a00}
+.messages{flex:1;min-height:0;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:#fff}
+.system-message{text-align:center;color:#777;font-size:13px;margin:auto;line-height:1.6}
+.message{max-width:88%;padding:10px 13px;border-radius:14px;background:#f1f1f1;color:#333;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.message.mine{align-self:flex-end;background:#e2f7eb}.message-meta{display:block;margin-top:4px;font-size:10px;color:#888}
+.message-form{display:flex;gap:10px;padding:10px 14px 14px;border-top:0;margin-top:auto}
+.message-form input{min-width:0;flex:1;background:#fff;border:1px solid #e1dcda;border-radius:13px;padding:14px;color:#333;outline:none;font-size:16px}
+.message-form input:focus{border-color:#f36a36;box-shadow:0 0 0 3px #ffede5}
+.message-form button{width:60px;border:0;border-radius:13px;background:#ff7138;color:#fff;font-size:25px;box-shadow:0 4px 10px #f36a3630;transition:transform .14s ease,filter .16s ease}
+.message-form button:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-2px)}
+.message-form button:active:not(:disabled){transform:translateY(2px) scale(.96)}
+.message-form button:disabled{opacity:.48}
+.moderation-actions{display:none}
+.page-footer{height:20px;flex:0 0 20px;background:#fffaf7;color:#a49a94;font-size:9px;display:flex;align-items:center;justify-content:space-between;padding:0 12px}
+.hidden{display:none!important}
+.toast{position:fixed;left:50%;bottom:24px;z-index:10;transform:translateX(-50%);background:#242424;border:1px solid #555;color:#fff;border-radius:10px;padding:12px 16px;font-size:12px;box-shadow:0 10px 35px #0007;opacity:0;pointer-events:none;transition:opacity .2s;max-width:calc(100vw - 30px);text-align:center}.toast.show{opacity:1}
+.video-stage.text-mode .you-card{display:none}.video-stage.text-mode .stranger-card{grid-column:1/3}
+@media(max-width:900px){
+ body{overflow:auto}.app-shell{height:auto;min-height:100vh}.topbar{height:72px;flex-basis:72px;padding:0 14px}.brand{gap:12px}.brand-mark{width:46px;height:42px;font-size:19px;line-height:18px;border-width:3px}.brand-mark small{font-size:8px}.brand-name{font-size:clamp(14px,3vw,22px)}.guest-pill{display:none}.online-pill{font-size:12px;padding:8px 12px}
+ .workspace{display:flex;flex-direction:column;gap:0;padding:8px}.video-stage{height:54vh;min-height:300px;flex:none;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:8px}.video-card{border-radius:15px;border-width:3px}.video-label{font-size:11px;left:9px;top:9px;padding:7px 9px}.ac-tv-logo{width:88px;height:76px;border-width:5px;border-radius:16px}.ac-tv-logo span{font-size:27px}.stranger-placeholder>strong{font-size:16px}.stranger-placeholder>span{font-size:11px}.loading-ring{width:55px;height:55px;border-width:6px}
+ .toolbar{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:10px 0}.action-button,.select-control{height:72px;border-radius:13px}.action-button{font-size:clamp(13px,2.4vw,20px);gap:6px}.button-icon{font-size:18px}.select-control{flex-direction:column;gap:4px;padding:6px}.select-control>span{font-size:12px}.select-control select{font-size:11px;text-align:center}.chat-panel{min-height:180px;margin:4px 0 10px;border-radius:15px}.chat-state{font-size:13px;margin:5px;padding:8px}.message-form input{font-size:14px;padding:11px}.message-form button{width:46px}
+ .page-footer{height:auto;min-height:25px}
+}
+@media(max-width:480px){
+ .topbar{height:60px;flex-basis:60px}.online-pill{font-size:10px;padding:7px 9px}.workspace{padding:5px}.video-stage{height:46vh;min-height:260px}.video-label{font-size:9px;padding:5px 7px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.action-button,.select-control{height:62px}.action-button{font-size:18px}.select-control{flex-direction:row}.select-control>span{font-size:12px}.select-control select{font-size:12px}.chat-panel{min-height:170px}
+}
+
+/* Exact reference-layout refinement */
+:root{color:#303640;background:#fffaf7}
+html,body,.app-shell{background:#fffaf7}
+.topbar{height:102px;flex-basis:102px;padding:0 2.8%;background:#fffdfb;border-bottom:1px solid #eee7e2}
+.brand{gap:28px}.brand-mark{width:70px;height:58px}.brand-name{font-size:clamp(22px,2.4vw,38px)}
+.header-right{gap:18px}.guest-pill,.online-pill{padding:13px 20px;border-radius:32px;background:#fff;font-size:17px}.online-pill{font-size:19px}
+.header-icon{width:62px;height:62px;border-radius:50%;border:1px solid #e6e1de;background:#fff;color:#333b45;font-size:30px;box-shadow:0 2px 5px #00000008;transition:transform .15s ease,background .15s ease}
+.header-icon:hover{background:#fff4ed;transform:translateY(-2px)}.header-icon:active{transform:scale(.94)}
+.workspace{grid-template-columns:minmax(0,1.5fr) minmax(360px,1fr);grid-template-rows:minmax(0,1fr) 205px;padding:10px 14px 10px;gap:0}
+.video-stage{gap:7px;padding:0 0 8px;grid-row:1}
+.video-card{border-radius:25px;border-width:5px}
+.stranger-placeholder{background-color:#303033;background-image:radial-gradient(#ffffff20 1px,transparent 1.7px),radial-gradient(#00000055 1px,transparent 2px),linear-gradient(135deg,#454548,#242427);background-size:5px 5px,7px 7px,100% 100%}
+.ac-tv-logo{width:124px;height:106px;border:6px solid #f36a36;border-radius:23px;background:#fff;color:#f36a36;box-shadow:0 5px 16px #0004}
+.ac-tv-logo:before{width:42px;height:6px;top:-14px;left:32px}.ac-tv-logo span{font-size:37px;letter-spacing:-2px}.ac-tv-logo b{font-size:12px;color:#f36a36;align-self:flex-end;margin-right:13px}.ac-tv-logo small{display:none}
+.stranger-placeholder>strong{font-size:clamp(20px,1.8vw,28px);font-weight:500;margin-top:4px}.stranger-placeholder>span{font-size:clamp(13px,1.2vw,18px);color:#eee}
+.search-dots{font-size:20px!important;letter-spacing:2px;margin-top:10px}
+.video-label{left:18px;top:16px;border-radius:13px;padding:10px 15px;font-size:17px}
+.local-placeholder{background:#000;gap:18px}.local-placeholder strong{font-size:clamp(20px,1.7vw,27px);font-weight:500}.camera-off-icon{font-size:76px;color:#f4f4f4;line-height:1}
+.toolbar{grid-column:1;grid-row:2;grid-template-columns:1.08fr 1.08fr 1.15fr 1.15fr;gap:10px;padding:18px 10px 10px 4px;align-items:stretch}
+.action-button,.select-control{height:104px;border-radius:20px}
+.action-button{font-size:clamp(20px,2vw,32px);gap:14px}.button-icon{font-size:30px}
+.start-button{background:linear-gradient(135deg,#35c978,#18a95b);border-color:#1eae62;box-shadow:0 5px 0 #13894a,0 10px 18px #149b5630}
+.stop-button{background:linear-gradient(135deg,#ff8749,#f34e27);border-color:#f15b31;box-shadow:0 5px 0 #d94020,0 10px 18px #f15b3130}
+.action-button:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.06)}
+.action-button:active:not(:disabled){transform:translateY(4px) scale(.97);box-shadow:0 1px 2px #0002;transition-duration:.07s}
+.select-control{gap:12px;padding:12px;border-radius:20px}.select-control>span{font-size:17px}.select-control select{font-size:clamp(14px,1.25vw,20px)}
+.chat-panel{grid-column:2;grid-row:2;margin:5px 0 0 0;min-height:180px;border-radius:22px;background:#fffdfc}
+.chat-state{gap:15px;margin:10px 12px;padding:12px 14px;font-size:clamp(14px,1.2vw,18px);line-height:1.4}
+.notice-icon{flex-basis:42px;height:42px;border:3px solid #ff7138;border-radius:9px;color:#ff7138;font-size:22px}
+.message-form{padding:8px 14px 14px;gap:12px}.message-form input{border-radius:13px;padding:14px 16px;font-size:17px}.message-form button{width:60px;height:60px;border-radius:13px}
+.page-footer{display:none}
+@media(max-width:900px){
+ .topbar{height:72px;flex-basis:72px;padding:0 14px}.header-icon{width:38px;height:38px;font-size:20px}.guest-pill{display:block;font-size:11px;padding:8px 10px}.online-pill{font-size:12px;padding:8px 12px}
+ .workspace{display:flex;flex-direction:column;padding:8px;gap:0}.video-stage{height:54vh;min-height:300px;flex:none;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:8px}
+ .toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:10px 0}.action-button,.select-control{height:72px;border-radius:13px}.action-button{font-size:clamp(13px,2.4vw,20px);gap:6px}.button-icon{font-size:18px}.select-control{flex-direction:column;gap:4px;padding:6px}.select-control>span{font-size:12px}.select-control select{font-size:11px;text-align:center}
+ .chat-panel{min-height:180px;margin:4px 0 10px;border-radius:15px}.chat-state{font-size:13px;margin:5px;padding:8px}.message-form input{font-size:14px;padding:11px}.message-form button{width:46px;height:46px}
+}
+@media(max-width:480px){.topbar{height:60px;flex-basis:60px}.header-icon{width:32px;height:32px;font-size:17px}.guest-pill{display:none}.workspace{padding:5px}.video-stage{height:46vh;min-height:260px}.toolbar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.action-button,.select-control{height:62px}.action-button{font-size:18px}.select-control{flex-direction:row}.select-control>span,.select-control select{font-size:12px}.chat-panel{min-height:170px}}
+
+
+/* UI correction: compact reference controls, aligned selectors and stronger press feedback */
+@media (min-width: 901px) {
+  .toolbar {
+    grid-template-columns: minmax(150px, 1.08fr) minmax(150px, 1.08fr) minmax(190px, 1.15fr) minmax(190px, 1.15fr);
+    gap: 10px;
+    min-width: 0;
+  }
+  .toolbar #nextBtn, .toolbar #micBtn, .toolbar #cameraBtn { display: none !important; }
+  .select-control {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 7px; padding: 12px 18px; min-width: 0; overflow: hidden;
+  }
+  .select-control > span { font-size: 16px; line-height: 1.1; }
+  .select-control select {
+    display: block; width: 100%; max-width: 100%; min-width: 0;
+    text-align: left; white-space: nowrap; text-overflow: ellipsis;
+    font-size: 17px; padding: 2px 22px 2px 0; cursor: pointer;
+  }
+}
+.action-button {
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease, filter .16s ease;
+  transform: translateY(0);
+}
+.action-button:active:not(:disabled) {
+  transform: translateY(5px) scale(.965) !important;
+  box-shadow: 0 1px 1px #0003 !important;
+  filter: brightness(.93) saturate(1.08);
+  transition-duration: .06s;
+}
+.select-control { min-width: 0; }
+.select-control select { cursor: pointer; }
+.message-form button { touch-action: manipulation; }
+@media (max-width: 900px) {
+  .toolbar #nextBtn, .toolbar #micBtn, .toolbar #cameraBtn { display: none !important; }
+  .select-control { flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; }
+  .select-control select { width: 100%; text-align: left; font-size: 13px; }
+}
+
+
+/* Control sizing matched to supplied reference: five large cards */
+#nextBtn { display:flex !important; }
+@media (min-width: 901px) {
+  .workspace { grid-template-rows: minmax(0, 1fr) 260px !important; }
+  .toolbar {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    padding: 12px 10px 10px 4px !important;
+    align-items: stretch !important;
+  }
+  .toolbar .action-button,
+  .toolbar .select-control {
+    height: 240px !important;
+    min-height: 240px !important;
+    border-radius: 20px !important;
+  }
+  .toolbar .action-button {
+    font-size: clamp(22px, 2vw, 34px) !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+  }
+  .toolbar .start-button { background: linear-gradient(180deg,#62c5a0,#4fb992) !important; }
+  .toolbar .stop-button { background: #e9ad9d !important; }
+  .toolbar .next-button { background: linear-gradient(180deg,#35c978,#18a95b) !important; border-color:#1eae62 !important; box-shadow:0 5px 0 #13894a,0 10px 18px #149b5630 !important; }
+  .toolbar .select-control { align-items:flex-start !important; justify-content:center !important; padding:22px !important; gap:16px !important; overflow:hidden !important; }
+  .toolbar .select-control > span { font-size:clamp(19px,1.4vw,25px) !important; }
+  .toolbar .select-control select { font-size:clamp(15px,1.15vw,20px) !important; text-align:left !important; }
+}
+@media (max-width: 900px) {
+  .toolbar { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:8px !important; }
+  .toolbar .action-button { display:flex !important; height:92px !important; }
+  .toolbar .select-control { height:92px !important; min-width:0 !important; }
+  .toolbar .icon-button { display:none !important; }
+}
+@media (max-width: 520px) {
+  .toolbar { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .toolbar .action-button, .toolbar .select-control { height:78px !important; min-height:78px !important; }
+}
+
+/* Final controls: four centered cards; Start transforms into Next while active */
+@media (min-width: 901px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-rows: minmax(300px, 1fr) 260px !important;
+  }
+  .toolbar {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    padding: 12px 10px 10px 4px !important;
+    align-items: stretch !important;
+    background: transparent !important;
+  }
+  .toolbar .action-button,
+  .toolbar .select-control {
+    height: 240px !important;
+    min-height: 240px !important;
+    width: 100% !important;
+    border-radius: 20px !important;
+  }
+  .toolbar .action-button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+    text-align: center !important;
+    font-size: clamp(24px, 2vw, 36px) !important;
+    padding: 12px !important;
+  }
+  .toolbar .start-button {
+    background: linear-gradient(180deg, #62c5a0, #4fb992) !important;
+    color: #fff !important;
+    border-color: #55b994 !important;
+    box-shadow: 0 6px 0 #369c79, 0 10px 18px #149b5630 !important;
+  }
+  .toolbar .stop-button {
+    background: #e9ad9d !important;
+    color: #fff !important;
+    border-color: #e5a18f !important;
+    box-shadow: 0 6px 0 #d99483, 0 10px 18px #b96d5a20 !important;
+  }
+  .toolbar .select-control {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    padding: 18px !important;
+    text-align: center !important;
+    overflow: hidden !important;
+  }
+  .toolbar .select-control > span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    font-size: clamp(22px, 1.5vw, 28px) !important;
+    line-height: 1.15 !important;
+  }
+  .toolbar .select-control select {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+    white-space: normal !important;
+    font-size: clamp(16px, 1.15vw, 20px) !important;
+    padding: 3px 0 !important;
+  }
+  .toolbar .icon-button { display: none !important; }
+  .safety-row { display: none !important; }
+}
+
+.action-button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .16s ease, filter .16s ease;
+}
+.action-button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.045); }
+.action-button:active:not(:disabled) {
+  transform: translateY(5px) scale(.965) !important;
+  box-shadow: 0 1px 2px #0003 !important;
+  filter: brightness(.94);
+  transition-duration: .06s;
+}
+.select-control > span,
+.select-control select { text-align: center; text-align-last: center; }
+
+@media (max-width: 900px) {
+  .toolbar {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+    padding: 10px 4px !important;
+  }
+  .toolbar .action-button,
+  .toolbar .select-control {
+    display: flex !important;
+    width: 100% !important;
+    height: 104px !important;
+    min-height: 104px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 8px !important;
+  }
+  .toolbar .select-control { flex-direction: column !important; gap: 8px !important; }
+  .toolbar .select-control > span { width: 100%; text-align: center !important; font-size: 15px !important; }
+  .toolbar .select-control select { width: 100%; text-align: center !important; text-align-last: center !important; font-size: 12px !important; }
+  .toolbar .icon-button { display: none !important; }
+}
+@media (max-width: 520px) {
+  .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .toolbar .action-button, .toolbar .select-control { height: 86px !important; min-height: 86px !important; }
+}

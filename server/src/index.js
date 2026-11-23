@@ -79,9 +79,14 @@ function cleanInterests(value) {
     .filter(Boolean))].slice(0, 10);
 }
 
-function cleanCountry(value) {
-  const country = String(value || 'any').trim().toLowerCase();
-  return /^[a-z]{2}$/.test(country) ? country : 'any';
+const BD_DIVISIONS = new Set([
+  'barishal', 'chattogram', 'dhaka', 'khulna',
+  'mymensingh', 'rajshahi', 'rangpur', 'sylhet'
+]);
+
+function cleanDivision(value) {
+  const division = String(value || 'any').trim().toLowerCase();
+  return division === 'any' || BD_DIVISIONS.has(division) ? division : 'any';
 }
 
 function removeFromQueue(id) {
@@ -99,8 +104,8 @@ function endPair(id, notify = true) {
   io.to(pair.roomId).socketsLeave(pair.roomId);
 }
 
-function countryCompatible(a, b) {
-  return a.country === 'any' || b.country === 'any' || a.country === b.country;
+function divisionCompatible(a, b) {
+  return a.division === 'any' || b.division === 'any' || a.division === b.division;
 }
 
 function findMatch(socket, mode, interests) {
@@ -109,9 +114,9 @@ function findMatch(socket, mode, interests) {
     candidate.id !== socket.id &&
     !socket.data.blocked.has(candidate.id) &&
     !candidate.blocked.has(socket.id) &&
-    countryCompatible(
-      { country: socket.data.country || 'any' },
-      { country: candidate.country || 'any' }
+    divisionCompatible(
+      { division: socket.data.division || 'any' },
+      { division: candidate.division || 'any' }
     ) &&
     (!interests.length || !candidate.interests.length ||
       interests.some(tag => candidate.interests.includes(tag)))
@@ -155,7 +160,7 @@ io.on('connection', socket => {
 
     socket.data.mode = mode;
     socket.data.interests = cleanInterests(payload.interests);
-    socket.data.country = cleanCountry(payload.country);
+    socket.data.division = cleanDivision(payload.division);
 
     const match = findMatch(socket, mode, socket.data.interests);
     if (match) {
@@ -165,7 +170,7 @@ io.on('connection', socket => {
         id: socket.id,
         socket,
         interests: socket.data.interests,
-        country: socket.data.country,
+        division: socket.data.division,
         blocked: socket.data.blocked
       });
       socket.emit('searching');
@@ -188,7 +193,7 @@ io.on('connection', socket => {
         id: socket.id,
         socket,
         interests,
-        country: socket.data.country || 'any',
+        division: socket.data.division || 'any',
         blocked: socket.data.blocked
       });
       socket.emit('searching');
