@@ -1,15 +1,125 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10131c"><meta name="description" content="Meet new people through random text and video chat."><title>StrangerConnect — Meet someone new</title><link rel="stylesheet" href="/style.css"></head>
-<body><div class="app-shell">
-<header class="topbar"><a class="brand" href="/"><span class="brand-mark">S</span> stranger<span>connect</span></a><div class="online-pill"><i></i><b id="onlineCount">0</b> online</div></header>
-<main>
-<section class="hero" id="homeView"><div class="eyebrow">✦ YOUR NEXT CONVERSATION STARTS HERE</div><h1>Meet someone<br><span>new today.</span></h1><p>Talk to people around the world. No profiles, no pressure — just real conversations.</p>
-<div class="setup-card"><div class="field-label">CHOOSE YOUR CHAT</div><div class="mode-switch"><button class="mode active" data-mode="video">▣ Video chat</button><button class="mode" data-mode="text">▤ Text chat</button></div>
-<label class="field-label" for="interests">YOUR INTERESTS <small>OPTIONAL · UP TO 10</small></label><input id="interests" maxlength="160" placeholder="music, gaming, movies, travel…"><div class="privacy-note">⌁ Your camera and microphone are only requested when you start video chat.</div>
-<button id="startBtn" class="primary-btn">Start chatting <span>→</span></button><div class="terms">By continuing, you agree to be respectful. Do not share personal information.</div></div></section>
-<section class="chat-view hidden" id="chatView"><div class="chat-heading"><div><div class="eyebrow" id="modeLabel">VIDEO CHAT</div><h2 id="chatStatus">Finding someone…</h2></div><div class="status-chip" id="statusChip"><i></i> Searching</div></div>
-<div class="video-grid" id="videoGrid"><div class="video-box remote-box"><video id="remoteVideo" autoplay playsinline></video><div class="video-placeholder" id="remotePlaceholder"><span>◉</span><b>Stranger</b><small>Waiting for a connection…</small></div><span class="video-tag">STRANGER</span></div><div class="video-box local-box"><video id="localVideo" autoplay muted playsinline></video><div class="video-placeholder" id="localPlaceholder"><span>◎</span><b>You</b></div><span class="video-tag">YOU</span></div></div>
-<div class="text-chat hidden" id="textChat"><div class="messages" id="messages"><div class="system-message">You're now looking for a stranger. Say hello when connected!</div></div><form id="messageForm"><input id="messageInput" maxlength="1000" placeholder="Write a message…" autocomplete="off"><button type="submit">Send ↑</button></form></div>
-<div class="controls"><button class="control-btn" id="micBtn" title="Toggle microphone">🎙 Mic</button><button class="control-btn" id="cameraBtn" title="Toggle camera">▣ Camera</button><button class="control-btn" id="reportBtn">⚑ Report</button><button class="control-btn" id="blockBtn">⊘ Block</button><button class="next-btn" id="nextBtn">Next person →</button><button class="control-btn end-btn" id="endBtn">End</button></div>
-<p class="safety">Stay safe: never share passwords, financial details, or your home address.</p></section>
-</main><footer>Made for conversations · <span>Be kind. Stay safe.</span></footer></div><div class="toast" id="toast" role="status"></div><script type="module" src="/src.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d16">
+  <meta name="description" content="Meet strangers around the world with anonymous video and text chat.">
+  <title>StrangerConnect — Random Video Chat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="StrangerConnect home">
+        <span class="brand-mark">S</span>
+        <span>stranger<span class="brand-muted">connect</span></span>
+      </a>
+      <div class="header-right">
+        <span class="guest-pill"><span class="guest-dot"></span> Guest mode · no login</span>
+        <div class="online-pill"><i></i><b id="onlineCount">0</b><span>online</span></div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="stage-column">
+        <div class="stage-heading">
+          <div>
+            <div class="eyebrow">MEET SOMEONE NEW</div>
+            <h1>Random video chat</h1>
+          </div>
+          <div class="connection-status" id="connectionStatus"><span class="status-dot"></span><span id="statusText">Ready to connect</span></div>
+        </div>
+
+        <div class="video-stage" id="videoStage">
+          <article class="video-card stranger-card">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="video-placeholder" id="remotePlaceholder">
+              <div class="placeholder-icon">✦</div>
+              <strong id="remoteTitle">Your next stranger is waiting</strong>
+              <span id="remoteHint">Press Start to find someone</span>
+            </div>
+            <span class="video-label"><span class="live-indicator"></span> STRANGER</span>
+          </article>
+          <article class="video-card you-card">
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div class="video-placeholder" id="localPlaceholder">
+              <div class="placeholder-icon">◎</div>
+              <strong>You</strong>
+              <span>Your camera preview appears here</span>
+            </div>
+            <span class="video-label">YOU</span>
+          </article>
+        </div>
+
+        <div class="toolbar">
+          <button class="action-button start-button" id="startBtn"><span class="button-icon">▶</span><span>Start</span></button>
+          <button class="action-button stop-button" id="stopBtn" disabled><span class="button-icon">■</span><span>Stop</span></button>
+          <button class="action-button next-button" id="nextBtn" disabled><span class="button-icon">↻</span><span>Next</span></button>
+          <label class="select-control">
+            <span>Country</span>
+            <select id="countrySelect" aria-label="Country matching group">
+              <option value="any">Any country</option>
+              <option value="bd">Bangladesh</option>
+              <option value="in">India</option>
+              <option value="pk">Pakistan</option>
+              <option value="np">Nepal</option>
+              <option value="lk">Sri Lanka</option>
+              <option value="us">United States</option>
+              <option value="gb">United Kingdom</option>
+              <option value="ca">Canada</option>
+              <option value="au">Australia</option>
+            </select>
+          </label>
+          <button class="icon-button" id="micBtn" title="Mute microphone" disabled>🎙</button>
+          <button class="icon-button" id="cameraBtn" title="Turn camera off" disabled>▣</button>
+        </div>
+
+        <div class="safety-row">
+          <span class="shield-icon">◇</span>
+          <span>Stay respectful. Never share passwords, financial details, or your home address.</span>
+          <span class="mode-switch" role="group" aria-label="Chat mode">
+            <button class="mode-button active" data-mode="video" type="button">Video</button>
+            <button class="mode-button" data-mode="text" type="button">Text</button>
+          </span>
+        </div>
+      </section>
+
+      <aside class="chat-panel">
+        <div class="chat-panel-header">
+          <div>
+            <div class="eyebrow">LIVE CONVERSATION</div>
+            <h2>Messages</h2>
+          </div>
+          <span class="chat-lock">PRIVATE SESSION</span>
+        </div>
+        <div class="chat-state" id="chatState">
+          <div class="chat-state-icon">✉</div>
+          <strong>No one here yet</strong>
+          <span>Start a chat to send and receive messages.</span>
+        </div>
+        <div class="messages hidden" id="messages" aria-live="polite"></div>
+        <form class="message-form" id="messageForm">
+          <input id="messageInput" maxlength="1000" placeholder="Write a message…" autocomplete="off" disabled>
+          <button type="submit" id="sendBtn" disabled aria-label="Send message">➤</button>
+        </form>
+        <div class="moderation-actions">
+          <button id="reportBtn" type="button" disabled>⚑ Report</button>
+          <button id="blockBtn" type="button" disabled>⊘ Block</button>
+        </div>
+        <div class="chat-footer">Anonymous guest chat · Be kind to each other</div>
+      </aside>
+    </main>
+
+    <footer class="page-footer">
+      <span>© StrangerConnect</span>
+      <span>Anonymous conversations · Use responsibly</span>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="/src.js"></script>
+</body>
+</html>

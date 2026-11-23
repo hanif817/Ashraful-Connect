@@ -6,67 +6,124 @@ import helmet from 'helmet';
 import { Server } from 'socket.io';
 
 const PORT = Number(process.env.PORT || 8000);
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+const rawOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map(value => value.trim())
+  .filter(Boolean);
+
+function originAllowed(origin) {
+  if (!origin) return true; // health checks and non-browser clients
+  if (rawOrigins.includes('*')) return true;
+  return rawOrigins.includes(origin);
+}
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (originAllowed(origin)) return callback(null, true);
+    return callback(new Error('Origin is not allowed by StrangerConnect CORS.'));
+  },
+  methods: ['GET', 'POST'],
+  credentials: false
+};
+
 const app = express();
+app.disable('x-powered-by');
 app.use(helmet({ crossOriginEmbedderPolicy: false }));
-app.use(cors({ origin: CLIENT_ORIGIN, methods: ['GET','POST'] }));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '20kb' }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: CLIENT_ORIGIN, methods: ['GET','POST'] },
+  cors: corsOptions,
   maxHttpBufferSize: 1e5,
   pingInterval: 25000,
   pingTimeout: 20000
 });
 
-let waiting = { video: [], text: [] };
-let online = 0;
-const pairs = new Map(); // socketId -> { peerId, roomId, mode }
+const waiting = { video: [], text: [] };
+const pairs = new Map();
 const reports = [];
+let online = 0;
+
 const iceServers = (() => {
-  try { return JSON.parse(process.env.ICE_SERVERS || '[]'); }
-  catch { return []; }
+  try {
+    const parsed = JSON.parse(process.env.ICE_SERVERS || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    console.warn('ICE_SERVERS is invalid JSON; using public STUN fallback.');
+    return [];
+  }
 })();
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'StrangerConnect', online }));
-app.get('/api/config', (_req, res) => res.json({
-  iceServers: iceServers.length ? iceServers : [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' }
-  ]
-}));
+app.get('/', (_req, res) => {
+  res.type('text/plain').send('StrangerConnect signalling server is running.');
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, service: 'StrangerConnect', online });
+});
+
+app.get('/api/config', (_req, res) => {
+  res.json({
+    iceServers: iceServers.length ? iceServers : [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' }
+    ]
+  });
+});
 
 function cleanInterests(value) {
   if (!Array.isArray(value)) return [];
-  return [...new Set(value.map(v => String(v).trim().toLowerCase()).filter(Boolean))].slice(0, 10);
+  return [...new Set(value
+    .map(item => String(item).trim().toLowerCase())
+    .filter(Boolean))].slice(0, 10);
 }
+
+function cleanCountry(value) {
+  const country = String(value || 'any').trim().toLowerCase();
+  return /^[a-z]{2}$/.test(country) ? country : 'any';
+}
+
 function removeFromQueue(id) {
-  for (const mode of ['video','text']) waiting[mode] = waiting[mode].filter(x => x.id !== id);
+  for (const mode of ['video', 'text']) {
+    waiting[mode] = waiting[mode].filter(entry => entry.id !== id);
+  }
 }
+
 function endPair(id, notify = true) {
-  const p = pairs.get(id);
-  if (!p) return;
+  const pair = pairs.get(id);
+  if (!pair) return;
   pairs.delete(id);
-  pairs.delete(p.peerId);
-  if (notify) io.to(p.peerId).emit('partner-left');
-  io.to(p.roomId).socketsLeave(p.roomId);
+  pairs.delete(pair.peerId);
+  if (notify) io.to(pair.peerId).emit('partner-left');
+  io.to(pair.roomId).socketsLeave(pair.roomId);
 }
+
+function countryCompatible(a, b) {
+  return a.country === 'any' || b.country === 'any' || a.country === b.country;
+}
+
 function findMatch(socket, mode, interests) {
   const queue = waiting[mode];
   const idx = queue.findIndex(candidate =>
     candidate.id !== socket.id &&
-    !socket.data.blocked?.has(candidate.id) &&
-    !candidate.blocked?.has(socket.id) &&
+    !socket.data.blocked.has(candidate.id) &&
+    !candidate.blocked.has(socket.id) &&
+    countryCompatible(
+      { country: socket.data.country || 'any' },
+      { country: candidate.country || 'any' }
+    ) &&
     (!interests.length || !candidate.interests.length ||
       interests.some(tag => candidate.interests.includes(tag)))
   );
   if (idx < 0) return null;
   return queue.splice(idx, 1)[0];
 }
+
 function pairUsers(a, b, mode) {
   const roomId = `room-${a.id}-${b.id}`;
-  a.join(roomId); b.join(roomId);
+  a.join(roomId);
+  b.join(roomId);
   pairs.set(a.id, { peerId: b.id, roomId, mode });
   pairs.set(b.id, { peerId: a.id, roomId, mode });
   a.emit('matched', { peerId: b.id, mode, initiator: true });
@@ -74,37 +131,67 @@ function pairUsers(a, b, mode) {
 }
 
 io.on('connection', socket => {
-  online++; io.emit('online-count', online);
+  online += 1;
+  io.emit('online-count', online);
+
   socket.data.blocked = new Set();
   socket.data.lastMessageAt = 0;
+  socket.data.lastQueueAt = 0;
+  socket.data.mode = null;
 
-  socket.on('join-queue', ({ mode, interests } = {}) => {
-    if (!['video','text'].includes(mode)) return socket.emit('app-error', 'Invalid chat mode.');
+  socket.on('join-queue', (payload = {}) => {
+    const now = Date.now();
+    if (now - socket.data.lastQueueAt < 700) return;
+    socket.data.lastQueueAt = now;
+
+    const mode = payload.mode;
+    if (!['video', 'text'].includes(mode)) {
+      socket.emit('app-error', 'Please choose video or text chat.');
+      return;
+    }
+
     endPair(socket.id);
     removeFromQueue(socket.id);
+
     socket.data.mode = mode;
-    socket.data.interests = cleanInterests(interests);
+    socket.data.interests = cleanInterests(payload.interests);
+    socket.data.country = cleanCountry(payload.country);
+
     const match = findMatch(socket, mode, socket.data.interests);
-    if (match) pairUsers(socket, match.socket, mode);
-    else {
-      waiting[mode].push({ id: socket.id, socket, interests: socket.data.interests, blocked: socket.data.blocked });
+    if (match) {
+      pairUsers(socket, match.socket, mode);
+    } else {
+      waiting[mode].push({
+        id: socket.id,
+        socket,
+        interests: socket.data.interests,
+        country: socket.data.country,
+        blocked: socket.data.blocked
+      });
       socket.emit('searching');
     }
   });
 
   socket.on('next', () => {
+    if (!socket.data.mode) return;
     endPair(socket.id);
     removeFromQueue(socket.id);
-    if (socket.data.mode) socket.emit('partner-left');
-    if (socket.data.mode) {
-      const mode = socket.data.mode;
-      const interests = socket.data.interests || [];
-      const match = findMatch(socket, mode, interests);
-      if (match) pairUsers(socket, match.socket, mode);
-      else {
-        waiting[mode].push({ id: socket.id, socket, interests, blocked: socket.data.blocked });
-        socket.emit('searching');
-      }
+
+    const mode = socket.data.mode;
+    const interests = socket.data.interests || [];
+    const match = findMatch(socket, mode, interests);
+
+    if (match) {
+      pairUsers(socket, match.socket, mode);
+    } else {
+      waiting[mode].push({
+        id: socket.id,
+        socket,
+        interests,
+        country: socket.data.country || 'any',
+        blocked: socket.data.blocked
+      });
+      socket.emit('searching');
     }
   });
 
@@ -114,34 +201,44 @@ io.on('connection', socket => {
     socket.data.mode = null;
   });
 
-  socket.on('chat-message', ({ text } = {}) => {
-    const p = pairs.get(socket.id);
+  socket.on('chat-message', (payload = {}) => {
+    const pair = pairs.get(socket.id);
     const now = Date.now();
-    if (!p || typeof text !== 'string' || !text.trim() || text.length > 1000) return;
-    if (now - socket.data.lastMessageAt < 250) return;
+    const text = typeof payload.text === 'string' ? payload.text.trim() : '';
+    if (!pair || !text || text.length > 1000) return;
+    if (now - socket.data.lastMessageAt < 300) return;
     socket.data.lastMessageAt = now;
-    io.to(p.peerId).emit('chat-message', { text: text.trim().slice(0,1000), at: now });
+    io.to(pair.peerId).emit('chat-message', {
+      text: text.slice(0, 1000),
+      at: now
+    });
   });
 
   socket.on('webrtc', payload => {
-    const p = pairs.get(socket.id);
-    if (!p || !payload || !['offer','answer','ice'].includes(payload.type)) return;
-    io.to(p.peerId).emit('webrtc', payload);
+    const pair = pairs.get(socket.id);
+    if (!pair || !payload || !['offer', 'answer', 'ice'].includes(payload.type)) return;
+    io.to(pair.peerId).emit('webrtc', payload);
   });
 
   socket.on('block-partner', () => {
-    const p = pairs.get(socket.id);
-    if (!p) return;
-    socket.data.blocked.add(p.peerId);
+    const pair = pairs.get(socket.id);
+    if (!pair) return;
+    socket.data.blocked.add(pair.peerId);
     endPair(socket.id);
     socket.emit('partner-left');
   });
 
-  socket.on('report-partner', ({ reason } = {}) => {
-    const p = pairs.get(socket.id);
-    if (!p) return;
-    reports.push({ reporter: socket.id, reported: p.peerId, reason: String(reason || 'unspecified').slice(0,120), at: new Date().toISOString() });
-    console.warn('[MODERATION REPORT]', reports.at(-1));
+  socket.on('report-partner', (payload = {}) => {
+    const pair = pairs.get(socket.id);
+    if (!pair) return;
+    const report = {
+      reporter: socket.id,
+      reported: pair.peerId,
+      reason: String(payload.reason || 'User-submitted report').slice(0, 160),
+      at: new Date().toISOString()
+    };
+    reports.push(report);
+    console.warn('[MODERATION REPORT]', report);
     endPair(socket.id);
     socket.emit('partner-left');
   });
@@ -154,4 +251,6 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(PORT, () => console.log(`StrangerConnect server listening on http://localhost:${PORT}`));
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`StrangerConnect server listening on port ${PORT}`);
+});

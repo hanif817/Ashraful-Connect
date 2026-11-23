@@ -1,39 +1,68 @@
-# StrangerConnect — Omegle-style Chat
+# StrangerConnect — OmeTV-style Anonymous Chat
 
-A runnable development starter for anonymous random text/video chat.
+A guest-only random video/text chat starter built with Vite, Node.js, Express, Socket.IO and WebRTC. No account or login is required.
 
 ## Requirements
-- Node.js 20 LTS or newer
+- Node.js 20 or newer
 - npm
 - VS Code
 
-## Run locally
+## Local setup
 1. Extract the ZIP and open the `Omegle-Ready` folder in VS Code.
-2. Open Terminal in VS Code.
-3. Install dependencies:
+2. Open a terminal in that folder.
+3. Install packages:
    ```bash
    npm install
    npm run install:all
    ```
 4. Copy `server/.env.example` to `server/.env`.
-5. Start both apps:
+5. Copy `client/.env.example` to `client/.env`.
+6. Run both apps:
    ```bash
    npm run dev
    ```
-6. Open `http://localhost:5173` in two browser tabs (or two devices on the same LAN using your PC's LAN IP and configure the server URL in `client/.env`).
+7. Open `http://localhost:5173` in two separate browser windows to test matching.
 
-The API/socket server runs on `http://localhost:8000`.
+Backend health endpoint: `http://localhost:8000/api/health`
 
-## Features
-- Random video and text matching
-- Optional comma-separated interests
-- Next/skip, disconnect, online count
-- Camera/microphone controls
-- WebRTC with public STUN servers
-- Report event endpoint/socket event and local block list
-- Input validation, message length limits, basic rate limits and CORS configuration
+## Production deployment
 
-## Important deployment notes
-This is a development-ready MVP, not a production audited service. WebRTC works best with HTTPS. For reliable calls across restrictive networks, configure a TURN server and set `ICE_SERVERS` in `server/.env`. Never expose TURN credentials in public source control. Set `CLIENT_ORIGIN` to your deployed frontend URL. Add persistent moderation review, abuse prevention, age/safety controls, monitoring and a durable database before opening to the public.
+### Backend (Render)
+- Repository root: project root
+- Root Directory: `server`
+- Build Command: `npm install`
+- Start Command: `npm start`
+- Environment variable `CLIENT_ORIGIN`: comma-separated exact frontend origins, for example `https://your-domain.example`
+- Do not set `PORT`; Render supplies it.
+- Keep any TURN credentials private. Add `ICE_SERVERS` only if you have a TURN/STUN configuration.
 
-The current block list is kept in the browser; reports are emitted to the server console and are not yet a staffed moderation workflow. The online count is in-memory and resets when the server restarts. No login/database is required for anonymous matching.
+### Frontend (InfinityFree)
+1. In `client/.env`, set:
+   ```env
+   VITE_SERVER_URL=https://your-render-service.onrender.com
+   ```
+2. From the project root, run:
+   ```bash
+   npm run build
+   ```
+3. Upload the *contents* of `client/dist/` into InfinityFree `htdocs/`:
+   - `index.html`
+   - `assets/` folder
+4. Make sure the site uses HTTPS. Web camera and microphone access require a secure context.
+5. Update Render `CLIENT_ORIGIN` to the exact HTTPS InfinityFree origin, then redeploy the backend.
+
+## Matching behavior
+- Video and text chat queues are separate.
+- Country selection groups users who choose the same country; “Any country” can match with any country group.
+- Optional interests are supported by the backend API. The current UI leaves interests empty for a simple OmeTV-style experience.
+- Next disconnects the current pair and searches again.
+- Block applies only to the current socket session; it is not persistent.
+- Reports are logged to the server console; there is no staffed moderation dashboard or persistent report database yet.
+
+## Important limitations before public launch
+- This is an MVP, not a production-audited service.
+- The online count and queues are in memory and reset when the server restarts. A single Render instance is assumed.
+- Public STUN servers do not guarantee calls across restrictive NATs. Reliable production video calls usually require a TURN service; configure it privately in `ICE_SERVERS`.
+- Guest mode has no verified age or identity. Add robust age assurance, moderation, abuse prevention, privacy/legal pages, monitoring, and persistent storage before public launch.
+- Render free instances may sleep when idle. The first request after sleep can be delayed.
+- InfinityFree hosts the static frontend only; it does not run the Node.js backend or Socket.IO server.
