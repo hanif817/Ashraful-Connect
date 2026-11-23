@@ -38,7 +38,10 @@
               <div class="store-badges" aria-label="Ashraful Connect"></div>
               <div class="volume-strip"></div>
             </div>
-            <span class="video-label">♙&nbsp; Stranger</span>
+            <span class="video-label name-badge" id="remoteNameLabel">
+  <i></i>
+  <span>Guest</span>
+</span>
           </article>
           <article class="video-card you-card">
             <video id="localVideo" autoplay muted playsinline></video>
@@ -46,7 +49,10 @@
               <div class="camera-off-icon" aria-hidden="true">▣╱</div>
               <strong>Camera is off</strong>
             </div>
-            <span class="video-label">▣&nbsp; You</span>
+            <span class="video-label name-badge" id="localNameLabel">
+  <i></i>
+  <span>Guest (You)</span>
+</span>
           </article>
         </div>
 
@@ -101,13 +107,64 @@
         <div class="moderation-actions">
           <button id="reportBtn" type="button" disabled>⚑ Report</button>
           <button id="blockBtn" type="button" disabled>⊘ Block</button>
-        </div>
+    
+</div>
       </aside>
     </main>
-    <footer class="page-footer"><span>© Ashraful Connect</span><span>Anonymous conversations · Use responsibly</span></footer>
+
+    <footer class="page-footer">
+      <span>© Ashraful Connect</span>
+      <span>Anonymous conversations · Use responsibly</span>
+    </footer>
   </div>
-  <div id="connectionStatus" class="hidden"><span id="statusText">Ready to connect</span></div>
+
+  <!-- Welcome Name Popup -->
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div class="welcome-modal" role="dialog" aria-modal="true">
+
+      <div class="welcome-logo">
+        <span>AC</span>
+        <small>TV</small>
+      </div>
+
+      <div class="welcome-brand">
+        ASHRAFUL <b>CONNECT</b>
+      </div>
+
+      <h2>Welcome! 👋</h2>
+
+      <p>Enter your name to start meeting new people.</p>
+
+      <label for="displayName">Your Name</label>
+
+      <input
+        type="text"
+        id="displayName"
+        placeholder="Enter your name..."
+        maxlength="30"
+        autocomplete="name"
+      >
+
+      <button type="button" id="continueBtn">
+        Continue <span>→</span>
+      </button>
+
+      <small class="welcome-note">
+        No login required · Free to chat
+      </small>
+
+      <div class="welcome-error" id="welcomeError"></div>
+
+    </div>
+  </div>
+
+  <div id="connectionStatus" class="hidden">
+    <span id="statusText">Ready to connect</span>
+  </div>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <script type="module" src="/src.js"></script>
 </body>
 </html>
+

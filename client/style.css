@@ -390,3 +390,220 @@ html,body,.app-shell{background:#fffaf7}
   .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .toolbar .action-button, .toolbar .select-control { height: 86px !important; min-height: 86px !important; }
 }
+
+/* Welcome Name Popup */
+body.welcome-open .app-shell {
+  filter: blur(5px) brightness(.62);
+  pointer-events: none;
+  user-select: none;
+}
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(20, 20, 20, .32);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.welcome-modal {
+  width: min(100%, 460px);
+  background: #fff;
+  color: #252a32;
+  border-radius: 30px;
+  padding: 30px 25px 24px;
+  box-shadow: 0 25px 80px rgba(0,0,0,.28);
+  text-align: center;
+  animation: welcomePop .35s ease;
+}
+
+.welcome-logo {
+  width: 64px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border: 4px solid #ff7138;
+  border-radius: 12px;
+  color: #f26532;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font: 700 25px "Space Grotesk";
+  line-height: 22px;
+  position: relative;
+}
+
+.welcome-logo::before {
+  content: "";
+  position: absolute;
+  width: 25px;
+  height: 4px;
+  background: #ff7138;
+  top: -10px;
+  left: 18px;
+  transform: rotate(-50deg);
+  border-radius: 5px;
+}
+
+.welcome-logo small {
+  font-size: 9px;
+  align-self: flex-end;
+  margin-right: 7px;
+}
+
+.welcome-brand {
+  font: 700 22px "Space Grotesk";
+  margin-bottom: 17px;
+}
+
+.welcome-brand b {
+  color: #f36a36;
+}
+
+.welcome-modal h2 {
+  font-size: 27px;
+  margin: 0 0 12px;
+  color: #17191d;
+}
+
+.welcome-modal p {
+  color: #737373;
+  font-size: 15px;
+  margin: 0 0 25px;
+}
+
+.welcome-modal label {
+  display: block;
+  text-align: left;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 9px;
+}
+
+.welcome-modal input {
+  width: 100%;
+  height: 56px;
+  padding: 0 14px;
+  border: 1px solid #dedede;
+  border-radius: 15px;
+  outline: none;
+  font-size: 16px;
+  color: #222;
+  background: #fff;
+  margin-bottom: 13px;
+}
+
+.welcome-modal input:focus {
+  border-color: #f36a36;
+  box-shadow: 0 0 0 3px #ff713820;
+}
+
+.welcome-modal button {
+  width: 100%;
+  height: 55px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ff7138, #f05225);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.welcome-modal button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.welcome-modal button:active {
+  transform: scale(.98);
+}
+
+.welcome-modal button span {
+  margin-left: 8px;
+  font-size: 20px;
+}
+
+.welcome-note {
+  display: block;
+  margin-top: 16px;
+  color: #888;
+  font-size: 13px;
+}
+
+.welcome-error {
+  color: #d93636;
+  font-size: 12px;
+  margin-top: 8px;
+  min-height: 15px;
+}
+
+@keyframes welcomePop {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media(max-width:480px) {
+  .welcome-modal {
+    padding: 25px 19px 20px;
+    border-radius: 23px;
+  }
+
+  .welcome-brand {
+    font-size: 19px;
+  }
+
+  .welcome-modal h2 {
+    font-size: 24px;
+  }
+}
+
+/* Transparent Glass Name Badges */
+.video-label.name-badge {
+  position: absolute !important;
+  top: auto !important;
+  left: 14px !important;
+  bottom: 12px !important;
+
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+
+  width: fit-content;
+  padding: 6px 11px !important;
+
+  background: rgba(25, 25, 25, 0.48) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+
+  color: #fff;
+  font-size: 11px !important;
+  font-weight: 500;
+  letter-spacing: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.video-label.name-badge i {
+  display: block;
+  width: 7px;
+  height: 7px;
+  min-width: 7px;
+  border-radius: 50%;
+  background: #35d98a;
+  box-shadow: 0 0 7px #35d98a;
+}

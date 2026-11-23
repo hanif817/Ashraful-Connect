@@ -18,6 +18,70 @@ let matched = false;
 let active = false;
 let pendingCandidates = [];
 let toastTimer = null;
+// Welcome popup and guest display name
+const welcomeOverlay = $('welcomeOverlay');
+const displayNameInput = $('displayName');
+const continueBtn = $('continueBtn');
+const welcomeError = $('welcomeError');
+
+
+function updateNameBadges() {
+  const myName =
+    localStorage.getItem('ashraful_display_name') || 'Guest';
+
+  $('localNameLabel').querySelector('span').textContent =
+    `${myName} (You)`;
+}
+
+
+function initializeWelcome() {
+  const savedName = localStorage.getItem('ashraful_display_name');
+
+  if (savedName) {
+    welcomeOverlay.classList.add('hidden');
+    return;
+  }
+
+  document.body.classList.add('welcome-open');
+  displayNameInput.focus();
+}
+
+function saveDisplayName() {
+  const name = displayNameInput.value.trim();
+
+  if (!name) {
+    welcomeError.textContent = 'Please enter your name.';
+    displayNameInput.focus();
+    return;
+  }
+
+  if (name.length < 2) {
+    welcomeError.textContent = 'Name must be at least 2 characters.';
+    return;
+  }
+
+  localStorage.setItem('ashraful_display_name', name);
+
+  updateNameBadges();
+
+  welcomeOverlay.classList.add('hidden');
+  document.body.classList.remove('welcome-open');
+}
+
+continueBtn.addEventListener('click', saveDisplayName);
+
+displayNameInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    saveDisplayName();
+  }
+});
+
+displayNameInput.addEventListener('input', () => {
+  welcomeError.textContent = '';
+});
+
+initializeWelcome();
+updateNameBadges();
 
 function toast(message) {
   const el = $('toast');
@@ -201,30 +265,40 @@ async function startChat() {
 
   resetMessages('Searching for a stranger…');
   setStatus('Finding someone…', 'searching');
-  socket.emit('join-queue', {
-    mode,
-    division: $('divisionSelect').value,
-    interests: []
-  });
+socket.emit('join-queue', {
+  mode,
+  name: localStorage.getItem('ashraful_display_name') || 'Guest',
+  division: $('divisionSelect').value,
+  interests: []
+});
 }
 
 function stopChat() {
   socket.emit('leave');
   active = false;
   matched = false;
+
+  // Reset stranger name
+  $('remoteNameLabel').querySelector('span').textContent = 'Guest';
+
   closePeer();
   stopMedia();
+
   $('startBtn').disabled = false;
   $('stopBtn').disabled = true;
   $('startBtn').querySelector('span').textContent = 'Start';
+
   $('divisionSelect').disabled = false;
   $('messageInput').disabled = true;
   $('sendBtn').disabled = true;
   $('messageInput').placeholder = 'Message available after a match';
+
   $('reportBtn').disabled = true;
   $('blockBtn').disabled = true;
+
   $('remoteTitle').textContent = 'Your next stranger is waiting';
   $('remoteHint').textContent = 'Press Start to find someone';
+
   showEmptyChat();
   setStatus('Ready to connect');
 }
@@ -323,7 +397,9 @@ socket.on('searching', () => {
   setStatus('Searching for a stranger…', 'searching');
 });
 
-socket.on('matched', async ({ mode: matchedMode, initiator }) => {
+socket.on('matched', async ({ mode: matchedMode, initiator, peerName }) => {
+  $('remoteNameLabel').querySelector('span').textContent =
+  peerName || 'Guest';
   matched = true;
   setMatchedControls(true);
   setStatus('You are connected', 'connected');
@@ -373,6 +449,9 @@ socket.on('webrtc', async payload => {
 socket.on('partner-left', () => {
   closePeer();
   matched = false;
+
+  $('remoteNameLabel').querySelector('span').textContent = 'Guest';
+
   setMatchedControls(false);
   if (active) {
     setStatus('Stranger disconnected', 'disconnected');

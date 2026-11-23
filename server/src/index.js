@@ -88,6 +88,12 @@ function cleanDivision(value) {
   const division = String(value || 'any').trim().toLowerCase();
   return division === 'any' || BD_DIVISIONS.has(division) ? division : 'any';
 }
+function cleanName(value) {
+  if (typeof value !== 'string') return 'Guest';
+
+  const name = value.trim().replace(/\s+/g, ' ').slice(0, 30);
+  return name.length >= 2 ? name : 'Guest';
+}
 
 function removeFromQueue(id) {
   for (const mode of ['video', 'text']) {
@@ -127,12 +133,26 @@ function findMatch(socket, mode, interests) {
 
 function pairUsers(a, b, mode) {
   const roomId = `room-${a.id}-${b.id}`;
+
   a.join(roomId);
   b.join(roomId);
+
   pairs.set(a.id, { peerId: b.id, roomId, mode });
   pairs.set(b.id, { peerId: a.id, roomId, mode });
-  a.emit('matched', { peerId: b.id, mode, initiator: true });
-  b.emit('matched', { peerId: a.id, mode, initiator: false });
+
+  a.emit('matched', {
+    peerId: b.id,
+    peerName: b.data.displayName || 'Guest',
+    mode,
+    initiator: true
+  });
+
+  b.emit('matched', {
+    peerId: a.id,
+    peerName: a.data.displayName || 'Guest',
+    mode,
+    initiator: false
+  });
 }
 
 io.on('connection', socket => {
@@ -159,6 +179,8 @@ io.on('connection', socket => {
     removeFromQueue(socket.id);
 
     socket.data.mode = mode;
+    
+    socket.data.displayName = cleanName(payload.name);
     socket.data.interests = cleanInterests(payload.interests);
     socket.data.division = cleanDivision(payload.division);
 
