@@ -1,4 +1,4 @@
-# StrangerConnect — OmeTV-style Anonymous Chat
+# Ashraful Connect — OmeTV-style Anonymous Chat
 
 A guest-only random video/text chat starter built with Vite, Node.js, Express, Socket.IO and WebRTC. No account or login is required.
 
@@ -66,3 +66,6 @@ Backend health endpoint: `http://localhost:8000/api/health`
 - Guest mode has no verified age or identity. Add robust age assurance, moderation, abuse prevention, privacy/legal pages, monitoring, and persistent storage before public launch.
 - Render free instances may sleep when idle. The first request after sleep can be delayed.
 - InfinityFree hosts the static frontend only; it does not run the Node.js backend or Socket.IO server.
+
+### Matching filters note
+The Country selector is used by the current in-memory matcher. The visible “I am” selector is a presentation placeholder only in this starter; it does not filter partners. Do not advertise gender matching until it is implemented with privacy, abuse-prevention, and age-safety controls.

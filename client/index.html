@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090d16">
-  <meta name="description" content="Meet strangers around the world with anonymous video and text chat.">
-  <title>StrangerConnect — Random Video Chat</title>
+  <meta name="theme-color" content="#111111">
+  <meta name="description" content="Ashraful Connect — meet people around the world with anonymous video and text chat.">
+  <title>Ashraful Connect — Random Video Chat</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -14,42 +14,39 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="/" aria-label="StrangerConnect home">
-        <span class="brand-mark">S</span>
-        <span>stranger<span class="brand-muted">connect</span></span>
+      <a class="brand" href="/" aria-label="Ashraful Connect home">
+        <span class="brand-mark"><span>AC</span><small>TV</small></span>
+        <span class="brand-name">ASHRAFUL <b>CONNECT</b></span>
       </a>
       <div class="header-right">
-        <span class="guest-pill"><span class="guest-dot"></span> Guest mode · no login</span>
+        <span class="guest-pill">GUEST MODE · NO LOGIN</span>
         <div class="online-pill"><i></i><b id="onlineCount">0</b><span>online</span></div>
       </div>
     </header>
 
     <main class="workspace">
       <section class="stage-column">
-        <div class="stage-heading">
-          <div>
-            <div class="eyebrow">MEET SOMEONE NEW</div>
-            <h1>Random video chat</h1>
-          </div>
-          <div class="connection-status" id="connectionStatus"><span class="status-dot"></span><span id="statusText">Ready to connect</span></div>
-        </div>
-
         <div class="video-stage" id="videoStage">
           <article class="video-card stranger-card">
             <video id="remoteVideo" autoplay playsinline></video>
-            <div class="video-placeholder" id="remotePlaceholder">
-              <div class="placeholder-icon">✦</div>
-              <strong id="remoteTitle">Your next stranger is waiting</strong>
-              <span id="remoteHint">Press Start to find someone</span>
+            <div class="video-placeholder stranger-placeholder" id="remotePlaceholder">
+              <div class="ac-tv-logo"><span>ASHRAFUL</span><b>CONNECT</b><small>LIVE VIDEO CHAT</small></div>
+              <strong id="remoteTitle">Meet someone new</strong>
+              <span id="remoteHint">Press Start to connect with a stranger</span>
+              <div class="store-badges" aria-label="Ashraful Connect">
+                <span class="store-badge"><b>▶</b><span><small>WELCOME TO</small>ASHRAFUL CONNECT</span></span>
+                <span class="store-badge"><b>✦</b><span><small>MEET PEOPLE</small>AROUND THE WORLD</span></span>
+              </div>
+              <div class="volume-strip"><span>◖))</span><div><i></i></div></div>
             </div>
             <span class="video-label"><span class="live-indicator"></span> STRANGER</span>
           </article>
           <article class="video-card you-card">
             <video id="localVideo" autoplay muted playsinline></video>
-            <div class="video-placeholder" id="localPlaceholder">
-              <div class="placeholder-icon">◎</div>
-              <strong>You</strong>
-              <span>Your camera preview appears here</span>
+            <div class="video-placeholder local-placeholder" id="localPlaceholder">
+              <div class="loading-ring" aria-hidden="true"></div>
+              <strong>Your camera preview</strong>
+              <span>Your video appears here when you press Start</span>
             </div>
             <span class="video-label">YOU</span>
           </article>
@@ -58,26 +55,33 @@
         <div class="toolbar">
           <button class="action-button start-button" id="startBtn"><span class="button-icon">▶</span><span>Start</span></button>
           <button class="action-button stop-button" id="stopBtn" disabled><span class="button-icon">■</span><span>Stop</span></button>
-          <button class="action-button next-button" id="nextBtn" disabled><span class="button-icon">↻</span><span>Next</span></button>
           <label class="select-control">
             <span>Country</span>
             <select id="countrySelect" aria-label="Country matching group">
-              <option value="any">Any country</option>
-              <option value="bd">Bangladesh</option>
-              <option value="in">India</option>
-              <option value="pk">Pakistan</option>
-              <option value="np">Nepal</option>
-              <option value="lk">Sri Lanka</option>
-              <option value="us">United States</option>
-              <option value="gb">United Kingdom</option>
-              <option value="ca">Canada</option>
-              <option value="au">Australia</option>
+              <option value="any">🌍 Any country</option>
+              <option value="bd">🇧🇩 Bangladesh</option>
+              <option value="in">🇮🇳 India</option>
+              <option value="pk">🇵🇰 Pakistan</option>
+              <option value="np">🇳🇵 Nepal</option>
+              <option value="lk">🇱🇰 Sri Lanka</option>
+              <option value="us">🇺🇸 United States</option>
+              <option value="gb">🇬🇧 United Kingdom</option>
+              <option value="ca">🇨🇦 Canada</option>
+              <option value="au">🇦🇺 Australia</option>
             </select>
           </label>
+          <label class="select-control gender-control">
+            <span>I am</span>
+            <select id="genderSelect" aria-label="Gender">
+              <option value="any">👤 Anyone</option>
+              <option value="man">👨 Man</option>
+              <option value="woman">👩 Woman</option>
+            </select>
+          </label>
+          <button class="action-button next-button" id="nextBtn" disabled><span class="button-icon">↻</span><span>Next</span></button>
           <button class="icon-button" id="micBtn" title="Mute microphone" disabled>🎙</button>
           <button class="icon-button" id="cameraBtn" title="Turn camera off" disabled>▣</button>
         </div>
-
         <div class="safety-row">
           <span class="shield-icon">◇</span>
           <span>Stay respectful. Never share passwords, financial details, or your home address.</span>
@@ -89,36 +93,24 @@
       </section>
 
       <aside class="chat-panel">
-        <div class="chat-panel-header">
-          <div>
-            <div class="eyebrow">LIVE CONVERSATION</div>
-            <h2>Messages</h2>
-          </div>
-          <span class="chat-lock">PRIVATE SESSION</span>
-        </div>
         <div class="chat-state" id="chatState">
-          <div class="chat-state-icon">✉</div>
-          <strong>No one here yet</strong>
-          <span>Start a chat to send and receive messages.</span>
+          <div class="notice-icon">AC</div>
+          <div class="notice-copy">By pressing “Start”, you agree to our <a href="#" id="rulesLink">rules</a>. Rule violators will be banned. Please keep your face visible in the camera frame.<br><span class="warning-symbol">⚠</span> <a href="#" id="safetyLink">Safety Reminder</a></div>
         </div>
         <div class="messages hidden" id="messages" aria-live="polite"></div>
         <form class="message-form" id="messageForm">
-          <input id="messageInput" maxlength="1000" placeholder="Write a message…" autocomplete="off" disabled>
+          <input id="messageInput" maxlength="1000" placeholder="Write a message" autocomplete="off" disabled>
           <button type="submit" id="sendBtn" disabled aria-label="Send message">➤</button>
         </form>
         <div class="moderation-actions">
           <button id="reportBtn" type="button" disabled>⚑ Report</button>
           <button id="blockBtn" type="button" disabled>⊘ Block</button>
         </div>
-        <div class="chat-footer">Anonymous guest chat · Be kind to each other</div>
       </aside>
     </main>
-
-    <footer class="page-footer">
-      <span>© StrangerConnect</span>
-      <span>Anonymous conversations · Use responsibly</span>
-    </footer>
+    <footer class="page-footer"><span>© Ashraful Connect</span><span>Anonymous conversations · Use responsibly</span></footer>
   </div>
+  <div id="connectionStatus" class="hidden"><span id="statusText">Ready to connect</span></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script type="module" src="/src.js"></script>
 </body>
